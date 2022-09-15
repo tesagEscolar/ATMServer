@@ -23,13 +23,14 @@ def consult():
     if (not checkNip(regnip, nip)):
         return '-:Nip incorrecto'
     print(hash_table)
+    balance = "${:,.2f}".format(balance)
     return f'+:El balance de {username} es {balance}'
 
 
 @app.route('/withdraw')
 def withdraw():
     username = request.args.get('accountid')
-    amount = int(request.args.get('amount'))
+    amount = float(request.args.get('amount'))
     nip = request.args.get('nip')
     balance, regnip = hash_table.get_val(username)
     if (not checkNip(regnip, nip)):
@@ -38,24 +39,27 @@ def withdraw():
         return '-:No hay fondos suficientes para retirar'
     balance -= amount
     hash_table.set_val(username, [balance, regnip])
+    balance = "${:,.2f}".format(balance)
     return f'+:El balance de {username} es {balance}'
 
 
 @app.route('/deposit')
 def deposit():
     username = request.args.get('accountid')
-    amount = int(request.args.get('amount'))
+    amount = float(request.args.get('amount'))
     nip = request.args.get('nip')
     balance, regnip = hash_table.get_val(username)
     if (nip == "-1"):
         balance += amount
         hash_table.set_val(username, [balance, regnip])
+        amount = "${:,.2f}".format(amount)
         return f'+:Deposito Anonimo exitoso. {amount} pesos depositados.'
     if (not checkNip(regnip, nip)):
         return '-:Nip incorrecto'
     balance += amount
     hash_table.set_val(username, [balance, regnip])
     print(hash_table)
+    amount = "${:,.2f}".format(amount)
     return f'+:El balance de {username} es {amount}'
 
 
@@ -94,7 +98,7 @@ def transfer():
     sender = request.args.get('sender')
     getter = request.args.get('getter')
     nip = request.args.get('nip')
-    amount = int(request.args.get('amount'))
+    amount = float(request.args.get('amount'))
     sender_balance, regnip = hash_table.get_val(sender)
     if (not checkNip(regnip, nip)):
         return '-:Nip incorrecto'
@@ -109,6 +113,7 @@ def transfer():
     getter_balance += amount
     hash_table.set_val(getter, [getter_balance, nipget])
     print(hash_table)
+    sender_balance = "${:,.2f}".format(sender_balance)
     return f'+:Transferencia exitosa. El balance de {sender} es {sender_balance}'
 
 
